@@ -1,10 +1,17 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
+// Define a type for the skill object
+interface Skill {
+  id: string;
+  name: string;
+  infoUrl?: string; // Optional field
+}
+
 const SkillsListPage: React.FC = () => {
-  const [skills, setSkills] = useState<any[]>([]);
-  const [error, setError] = useState<string | null>(null);
+  const [skills, setSkills] = useState<Skill[]>([]); // Use the Skill type
   const [loading, setLoading] = useState<boolean>(true);
 
   const fetchSkillsList = async () => {
@@ -24,7 +31,6 @@ const SkillsListPage: React.FC = () => {
       const skillsResponse = await axios.get(
         "https://emsiservices.com/skills/versions/latest/skills",
         {
-          
           headers: {
             Authorization: `Bearer ${accessToken}`,
             "Content-Type": "application/json",
@@ -36,7 +42,6 @@ const SkillsListPage: React.FC = () => {
 
     } catch (error) {
       console.error("Error fetching skills list:", error);
-      setError(error.response?.data?.error || error.message);
     } finally {
       setLoading(false);
     }
@@ -47,7 +52,6 @@ const SkillsListPage: React.FC = () => {
   }, []);
 
   if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
 
   return (
     <div className="container mx-auto p-4">
@@ -55,9 +59,15 @@ const SkillsListPage: React.FC = () => {
       <ul className="list-disc pl-5">
         {skills.map((skill) => (
           <li key={skill.id} className="my-2">
-            <div>{skill.name} - {skill.id}</div>
+            <div>
+              {skill.name} - {skill.id}
+            </div>
             {skill.infoUrl && (
-              <a href={skill.infoUrl} target="_blank" rel="noopener noreferrer">
+              <a
+                href={skill.infoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 More Info
               </a>
             )}
